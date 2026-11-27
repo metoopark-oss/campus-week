@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5efe4">
+<title>대학생으로 일주일 살아남기</title>
+<style>
+  :root { color-scheme: light; --paper:#fffdf8; --ink:#413e36; --muted:#746d61; --line:#e5ddcd; --green:#4e6554; --rose:#925b52; }
+  * { box-sizing:border-box; }
+  body { margin:0; color:var(--ink); background:#f5efe4; font:16px/1.65 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; }
+  button { font:inherit; cursor:pointer; touch-action:manipulation; }
+  button:focus-visible { outline:3px solid #81633c; outline-offset:4px; }
+  h1:focus,h2:focus { outline:none; }
+  h1,h2,h3,p { margin:0; }
+  h1,h2 { line-height:1.4; word-break:keep-all; overflow-wrap:anywhere; }
+  h1 { font-size:clamp(29px,6vw,40px); letter-spacing:-1.5px; }
+  h2 { font-size:clamp(25px,5vw,32px); letter-spacing:-1px; }
+  h3 { font-size:16px; }
+  main { width:min(100% - 32px,580px); margin:44px auto 28px; }
+  .brand { display:flex; justify-content:space-between; gap:12px; margin:0 5px 17px; color:var(--muted); font-size:13px; letter-spacing:1px; }
+  .card { background:var(--paper); border:1px solid var(--line); border-radius:22px; padding:36px; box-shadow:0 12px 36px #60513b0b; position:relative; }
+  .card::before { content:""; position:absolute; width:72px; height:22px; top:-11px; left:calc(50% - 36px); background:#d6c6a77a; transform:rotate(-3deg); }
+  .eyebrow { font-size:13px; letter-spacing:2px; color:var(--muted); margin-bottom:15px; }
+  .subtitle { color:var(--muted); margin-top:14px; }
+  .week { display:flex; justify-content:space-between; gap:6px; margin:25px 0; }
+  .day-dot { flex:1; text-align:center; padding:6px 0; border-radius:50%; color:var(--muted); font-size:14px; }
+  .day-dot.done { color:var(--green); background:#e8ede4; }
+  .day-dot.current { color:white; background:var(--green); }
+  .rule { padding:20px; border-radius:14px; background:#f5f1e9; margin:24px 0; }
+  .rule p + p { margin-top:10px; }
+  .rule strong { font-weight:650; }
+  .fine { color:var(--muted); font-size:14px; }
+  .footer { text-align:center; color:var(--muted); font-size:13px; margin:20px 0; }
+  .primary { display:block; width:100%; min-height:52px; padding:12px 18px; background:var(--green); color:#fffdf8; border:1px solid var(--green); border-radius:12px; font-weight:650; }
+  .primary:hover { background:#405645; }
+  .stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:24px 0; }
+  .stat { text-align:center; min-width:0; padding:13px 4px; border:1px solid var(--line); border-radius:13px; background:#fcfaf5; }
+  .stat dt { font-size:14px; color:var(--muted); }
+  .stat dd { font-size:27px; line-height:1.4; font-weight:700; margin:4px 0 0; font-variant-numeric:tabular-nums; }
+  .bar { display:block; height:4px; margin:9px 10px 2px; border-radius:8px; overflow:hidden; background:#e9e3d8; }
+  .bar span { display:block; height:100%; background:#82987c; }
+  .stat:nth-child(2) .bar span { background:#b0916e; }
+  .stat:nth-child(3) .bar span { background:#c39186; }
+  .choices { display:grid; gap:12px; margin-top:18px; }
+  .choice { width:100%; text-align:left; border:1px solid var(--line); border-radius:14px; padding:17px 18px; color:var(--ink); background:#fffdf8; min-height:88px; }
+  .choice:hover { border-color:#82987c; background:#f3f5ed; }
+  .choice-title { display:block; font-size:18px; font-weight:650; }
+  .letter { display:inline-block; margin-right:9px; color:var(--green); font-size:13px; }
+  .effects { display:flex; flex-wrap:wrap; gap:4px 12px; font-size:14px; margin-top:6px; color:var(--muted); }
+  .effects span { white-space:nowrap; }
+  .result { border-top:1px dashed #d6cbbb; padding-top:22px; margin-top:22px; }
+  .picked { font-size:20px; font-weight:650; margin:6px 0 16px; word-break:keep-all; }
+  .changes { list-style:none; padding:0; margin:12px 0 18px; }
+  .changes li { display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 12px; justify-content:space-between; padding:7px 0; border-bottom:1px solid #eee8dc; font-variant-numeric:tabular-nums; }
+  .change-values { display:inline-flex; flex-wrap:wrap; gap:8px; }
+  .delta { font-weight:650; color:var(--green); }
+  .delta.negative { color:var(--rose); }
+  .notice { color:var(--muted); font-size:14px; margin-bottom:18px; }
+  .ending .stats dd { font-size:34px; }
+  .history { margin:25px 0; border-top:1px dashed #d6cbbb; padding-top:18px; }
+  .history ol { list-style:none; padding:0; margin:10px 0 0; }
+  .history li { display:grid; grid-template-columns:48px 1fr; gap:8px; margin:7px 0; font-size:14px; color:var(--muted); }
+  .history li span:first-child { color:#5d6657; }
+  @media (max-width:420px) { main { margin-top:30px; } .card { padding:28px 21px; } .brand { font-size:12px; letter-spacing:.4px; } .stats { gap:7px; } .rule { padding:16px; } }
+  @media (prefers-reduced-motion:no-preference) { button { transition:background-color .15s,border-color .15s; } }
+</style>
+</head>
+<body>
+<main>
+  <header class="brand"><span>나의 캠퍼스 다이어리</span><span>일주일의 작은 선택들</span></header>
+  <section class="card" id="game" aria-label="대학생으로 일주일 살아남기"></section>
+  <noscript><p class="rule">게임을 하려면 브라우저에서 JavaScript를 켜 주세요.</p></noscript>
+  <footer class="footer">하루 한 장, 나만의 일주일을 써 내려가요.</footer>
+</main>
+<script>
+'use strict';
+(() => {
+  const CSV = `요일,사건,선택A,학업A,체력A,행복A,선택B,학업B,체력B,행복B
+월요일,1교시와 늦잠,수업에 간다,15,-10,-5,늦잠을 잔다,-10,15,5
+화요일,팀플 초안과 친구 약속,팀플 초안을 쓴다,15,-10,-5,친구를 만난다,-10,-5,15
+수요일,동아리와 도서관,동아리에 간다,-5,-10,20,도서관에 간다,15,-5,-10
+목요일,마감과 수면,밤새 마무리한다,20,-25,-10,잠을 충분히 잔다,-10,20,5
+금요일,나들이와 예습,나들이를 간다,-10,-5,20,다음 주 예습을 한다,15,-10,-5
+토요일,운동과 몰아 공부,가볍게 운동한다,0,20,10,몰아서 공부한다,20,-15,-5
+일요일,주간 계획과 드라마,다음 주를 계획한다,10,-5,5,드라마를 본다,-5,5,15`;
+  const KEYS = ['study', 'health', 'happiness'];
+  const LABELS = { study:'학업', health:'체력', happiness:'행복' };
+  const EVENTS = Object.freeze(CSV.split('\n').slice(1).map(row => {
+    const c = row.split(',');
+    const choice = offset => Object.freeze({ label:c[offset], delta:Object.freeze({ study:Number(c[offset+1]), health:Number(c[offset+2]), happiness:Number(c[offset+3]) }) });
+    return Object.freeze({ day:c[0], title:c[1], choices:Object.freeze([choice(2), choice(6)]) });
+  }));
+  const game = document.getElementById('game');
+  let state = createInitialState();
+  // A new render has a new input token: queued clicks from an older card cannot act on it.
+  let renderVersion = 0;
+
+  function createInitialState() {
+    return { phase:'start', dayIndex:0, stats:{study:50, health:50, happiness:50}, history:[], ending:null };
+  }
+  function applyChoice(stats, delta) {
+    const after = {}, actualDelta = {};
+    for (const key of KEYS) {
+      after[key] = Math.max(0, Math.min(100, stats[key] + delta[key]));
+      actualDelta[key] = after[key] - stats[key];
+    }
+    return { after, actualDelta };
+  }
+  function getEnding(stats, dayIndex) {
+    if (KEYS.some(key => stats[key] === 0)) return '재충전 필요';
+    if (dayIndex === 6) return KEYS.every(key => stats[key] >= 40) ? '균형 달인' : '아슬아슬 생존';
+    return null;
+  }
+  function choose(dayIndex, choiceIndex) {
+    if (state.phase !== 'choice' || dayIndex !== state.dayIndex || ![0,1].includes(choiceIndex) || state.history.some(entry => entry.dayIndex === dayIndex)) return;
+    state.phase = 'result';
+    const selected = EVENTS[dayIndex].choices[choiceIndex];
+    const before = {...state.stats};
+    const {after, actualDelta} = applyChoice(before, selected.delta);
+    state.history.push({ dayIndex, choiceIndex, label:selected.label, before, after:{...after}, actualDelta });
+    state.stats = after;
+    state.ending = getEnding(after, dayIndex);
+    if (state.ending === '재충전 필요') state.phase = 'ending';
+    render();
+  }
+  function advance(dayIndex) {
+    if (state.phase !== 'result' || dayIndex !== state.dayIndex) return;
+    if (dayIndex === 6) state.phase = 'ending';
+    else { state.dayIndex++; state.phase = 'choice'; }
+    render();
+  }
+  function startGame() {
+    if (state.phase !== 'start') return;
+    state = createInitialState();
+    state.phase = 'choice';
+    render();
+  }
+  function restartGame() {
+    if (state.phase !== 'ending') return;
+    state = createInitialState();
+    render();
+  }
+  function signed(n) { return n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : '0'; }
+  function effects(delta) {
+    return `<span class="effects">${KEYS.map(key => `<span>${LABELS[key]} ${signed(delta[key])}</span>`).join('')}</span>`;
+  }
+  function statsMarkup(stats) {
+    return `<dl class="stats">${KEYS.map(key => `<div class="stat"><dt>${LABELS[key]}</dt><dd>${stats[key]}<span class="bar" aria-hidden="true"><span style="width:${stats[key]}%"></span></span></dd></div>`).join('')}</dl>`;
+  }
+  function weekMarkup() {
+    return `<div class="week" aria-label="일주일 진행도">${EVENTS.map((event,i) => `<span class="day-dot ${i === state.dayIndex ? 'current' : i < state.history.length ? 'done' : ''}"${i === state.dayIndex ? ' aria-current="step"' : ''}>${event.day[0]}</span>`).join('')}</div>`;
+  }
+  function resultMarkup(entry) {
+    const selected = EVENTS[entry.dayIndex].choices[entry.choiceIndex];
+    const limited = KEYS.some(key => selected.delta[key] !== entry.actualDelta[key]);
+    return `<div class="result"><p class="fine">${EVENTS[entry.dayIndex].day}의 선택</p><h3 class="picked">${entry.label}</h3>
+      <ul class="changes">${KEYS.map(key => `<li><span>${LABELS[key]}</span><span class="change-values"><span>${entry.before[key]} → ${entry.after[key]}</span><span class="delta ${entry.actualDelta[key] < 0 ? 'negative' : ''}">(${signed(entry.actualDelta[key])})</span></span></li>`).join('')}</ul>
+      ${limited ? '<p class="notice">능력치는 0~100 사이로 유지돼요. 위 숫자는 범위 제한을 적용한 실제 변화량이에요.</p>' : ''}</div>`;
+  }
+  function render() {
+    renderVersion++;
+    const token = renderVersion;
+    game.classList.toggle('ending', state.phase === 'ending');
+    if (state.phase === 'start') {
+      game.innerHTML = `<p class="eyebrow">CAMPUS DIARY · 7 DAYS</p><h1 tabindex="-1">대학생으로<br>일주일 살아남기</h1>
+        <p class="subtitle">수업도, 잠도, 소소한 즐거움도.<br>당신의 일주일은 어떤 모습일까요?</p>
+        <div class="week" aria-label="월요일부터 일요일까지">${EVENTS.map(event => `<span class="day-dot">${event.day[0]}</span>`).join('')}</div>
+        <div class="rule"><p><strong>월요일부터 일요일까지</strong><br>하루에 두 선택지 중 하나를 골라요.</p><p>학업 · 체력 · 행복은 <strong>모두 50</strong>에서 시작하고, 0~100 사이로 유지돼요.</p><p>하나라도 <strong>0</strong>이 되면 재충전 필요.<br>7일을 버티고 모두 <strong>40 이상</strong>이면 균형 달인, 그 외에는 아슬아슬 생존이에요.</p></div>
+        <button class="primary" data-action="start">시작하기</button><p class="fine" style="text-align:center;margin-top:14px">새로고침하면 처음부터 시작해요.</p>`;
+    } else if (state.phase === 'choice' || state.phase === 'result') {
+      const event = EVENTS[state.dayIndex];
+      game.innerHTML = `<p class="eyebrow">${event.day} · ${state.dayIndex+1}/7일</p><h2 tabindex="-1">${event.title}</h2>${weekMarkup()}${statsMarkup(state.stats)}
+        ${state.phase === 'choice' ? `<p class="fine">오늘은 어떻게 보내 볼까요?</p><div class="choices">${event.choices.map((choice,i) => `<button class="choice" data-action="choose" data-choice="${i}"><span class="choice-title"><span class="letter">${i === 0 ? 'A' : 'B'}</span>${choice.label}</span>${effects(choice.delta)}</button>`).join('')}</div>` : `${resultMarkup(state.history[state.history.length-1])}<p class="notice">오늘의 한 장을 기록했어요.</p><button class="primary" data-action="advance">${state.dayIndex === 6 ? '엔딩 보기' : '다음 날'}</button>`}`;
+    } else {
+      const copy = {
+        '재충전 필요':'잠깐 쉬어 가도 괜찮아요. 나를 돌보는 것도 대학생활의 한 부분이니까요.',
+        '균형 달인':'공부와 휴식, 즐거움까지. 나에게 맞는 속도로 일주일을 채웠어요.',
+        '아슬아슬 생존':'조금 아슬아슬했지만, 일주일을 끝까지 보냈어요. 다음 주는 조금 더 나답게!'
+      };
+      game.innerHTML = `<p class="eyebrow">${state.ending === '재충전 필요' ? `${EVENTS[state.dayIndex].day} · 잠시 쉬어 가기` : '일요일 · 일주일의 마지막 장'}</p><h2 tabindex="-1">${state.ending}</h2><p class="subtitle">${copy[state.ending]}</p>
+        <p class="fine" style="margin-top:24px">나의 최종 능력치</p>${statsMarkup(state.stats)}
+        ${state.ending === '재충전 필요' ? resultMarkup(state.history[state.history.length-1]) : ''}
+        <div class="history"><h3>작게 남겨 둔 이번 주</h3><ol>${state.history.map(entry => `<li><span>${EVENTS[entry.dayIndex].day}</span><span>${entry.label}</span></li>`).join('')}</ol></div>
+        <button class="primary" data-action="restart">다시 시작</button>`;
+    }
+    const dayIndex = state.dayIndex;
+    // Bind to the new buttons, never to an old card or a delayed event.
+    game.querySelectorAll('button[data-action]').forEach(button => {
+      button.addEventListener('click', event => {
+        if (token !== renderVersion || event.detail > 1) return;
+        button.disabled = true;
+        const action = button.dataset.action;
+        if (action === 'start') startGame();
+        else if (action === 'choose') choose(dayIndex, Number(button.dataset.choice));
+        else if (action === 'advance') advance(dayIndex);
+        else if (action === 'restart') restartGame();
+      });
+    });
+    const heading = game.querySelector('h1,h2');
+    heading.focus({preventScroll:true});
+    if (state.phase !== 'start') game.scrollIntoView({block:'start', behavior:'instant'});
+  }
+  render();
+})();
+</script>
+</body>
+</html>
